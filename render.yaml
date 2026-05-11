@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: finops-agent
+    env: python
+    buildCommand: |
+      pip install uv
+      uv sync --frozen
+      cd frontend && npm ci && npm run build && cd ..
+    startCommand: uv run uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: OLLAMA_BASE_URL
+        sync: false
+      - key: OLLAMA_API_KEY
+        sync: false
+      - key: OLLAMA_MODEL
+        value: qwen2.5:7b
+      - key: OLLAMA_EMBED_MODEL
+        value: nomic-embed-text
+      - key: QDRANT_PATH
+        value: ./qdrant_data
+      - key: APP_ENV
+        value: production
+      - key: CORS_ORIGINS
+        value: "*"
