@@ -109,7 +109,7 @@ function TypingIndicator() {
           }} />
         ))}
       </div>
-      <span style={{ fontSize: 12, color: '#475569' }}>Analyzing with real market data...</span>
+      <span style={{ fontSize: 12, color: '#475569' }}></span>
     </div>
   )
 }
