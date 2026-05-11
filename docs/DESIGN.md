@@ -25,11 +25,11 @@ LangGraph StateGraph  ←── the "brain"
         │
         ├── Ollama  ──────────────────── runs the LLM locally or via cloud
         │     ├── qwen2.5:7b            chat / reasoning
-        │     └── nomic-embed-text      embeddings (768-dim)
+        │     └── all-MiniLM-L6-v2      embeddings (384-dim, fastembed local)
         │
         └── Qdrant ───────────────────── vector store
               └── collection: finops_knowledge
-                    ├── Dense vectors (cosine, 768-dim)
+                    ├── Dense vectors (cosine, 384-dim)
                     └── In-memory BM25 index (rank_bm25)
 
 backend/data/company_spend.py  ←── deterministic 90-day internal spend ledger
@@ -77,7 +77,7 @@ In production at scale, swap `documents.py` for a loader that pulls from S3 or C
 create_collection(
     collection_name = "finops_knowledge",
     vectors_config  = VectorParams(
-        size     = 768,           # nomic-embed-text output dimension
+        size     = 384,           # all-MiniLM-L6-v2 output dimension
         distance = Distance.COSINE
     )
 )
@@ -103,7 +103,7 @@ Source document  →  chunk_document()  →  _embed()  →  PointStruct
 | `payload.category` | `str` | `"policy"` | One of: `policy`, `playbook`, `guide` |
 | `payload.chunk_idx` | `int` | `0` | Zero-based chunk index within the parent document |
 | `payload.content` | `str` | `"This policy defines budget thresholds..."` | Raw text of the chunk (≤800 words) |
-| `vector` | `float[768]` | `[0.021, -0.143, ...]` | nomic-embed-text embedding of `payload.content` |
+| `vector` | `float[384]` | `[0.021, -0.143, ...]` | all-MiniLM-L6-v2 embedding of `payload.content` |
 
 ### The Six Source Documents
 
@@ -215,4 +215,4 @@ None are estimated or interpolated.
 
 **Internal spend ledger over live market proxies:** The agent analyzes `SPEND_RECORDS` in `backend/data/company_spend.py` — 810 records of deterministic daily spend per service and team, generated with seed=42. Spend ranges, waste percentages, and benchmark thresholds are all grounded in the six primary 2025 reports listed above. Three embedded anomalies (GPU spike Z≈6.2, pipeline creep, API outage) exercise the Z-score detection path with realistic signal. The `get_market_benchmark` tool compares the company's actual monthly spend against the sourced per-size benchmarks — allowing the agent to say "your spend is 3×the mid-market benchmark of $9,000/month (SpendArk 2026)" rather than quoting a stock ETF.
 
-**nomic-embed-text over OpenAI `text-embedding-3-small`:** Fully local, zero cost, 768 dimensions — sufficient for a 6-document corpus. The quality gap vs. a hosted embedding model is negligible at this corpus size.
+**`sentence-transformers/all-MiniLM-L6-v2` over larger embeddings:** Fully local via fastembed, zero cost, 384 dimensions, ~80 MB resident — chosen so the agent runs on a 512 MB Render instance. The quality gap vs. larger 768-dim models is negligible at this corpus size (6 documents, ~4k words).

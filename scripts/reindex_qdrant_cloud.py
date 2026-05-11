@@ -22,8 +22,8 @@ QDRANT_URL = "https://1036a54e-3193-4e6d-b7db-61be701c6a48.us-west-1-0.aws.cloud
 QDRANT_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwic3ViamVjdCI6ImFwaS1rZXk6NjVlYjRmMGQtMjA3Ny00MTAyLTg2MmEtM2RhZTY3MjQ3OWJmIn0.pFmuGGXBSQh7fBYksf-jBGb3wX7qPhF_tS6AtdCoYzw"
 
 COLLECTION = "finops_knowledge"
-EMBED_MODEL = "BAAI/bge-base-en-v1.5"
-EMBED_DIM   = 768
+EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+EMBED_DIM   = 384
 CHUNK_SIZE  = 800
 CHUNK_OVERLAP = 150
 

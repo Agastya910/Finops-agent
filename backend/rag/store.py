@@ -19,8 +19,8 @@ from .documents import FINOPS_DOCUMENTS
 
 settings = get_settings()
 COLLECTION_NAME = "finops_knowledge"
-EMBED_DIM = 768
-EMBED_MODEL_NAME = "BAAI/bge-base-en-v1.5"
+EMBED_DIM = 384
+EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 _embedder = None
 
